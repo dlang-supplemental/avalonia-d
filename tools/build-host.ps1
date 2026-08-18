@@ -1,6 +1,18 @@
 param(
-    [ValidateSet("win-x64", "linux-x64", "osx-x64", "osx-arm64")]
-    [string] $Runtime = $(if ($IsWindows -or $env:OS -match "Windows") { "win-x64" } elseif ($IsMacOS) { "osx-arm64" } else { "linux-x64" }),
+    [ValidateSet("win-x64", "win-arm64", "linux-x64", "linux-arm64", "osx-arm64")]
+    [string] $Runtime = $(
+        $arch = $null
+        try { $arch = [System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture.ToString() }
+        catch { $arch = $env:PROCESSOR_ARCHITECTURE }
+        if (-not $arch) { $arch = $env:PROCESSOR_ARCHITECTURE }
+        $isWindows = if (Get-Variable -Name IsWindows -ErrorAction SilentlyContinue) { [bool]$IsWindows } else { [bool]($env:OS -match "Windows") }
+        $isMac = if (Get-Variable -Name IsMacOS -ErrorAction SilentlyContinue) { [bool]$IsMacOS } else { $false }
+        $arm = $arch -match "Arm|ARM64|Aarch64|AArch64"
+        if ($isWindows) { if ($arm) { "win-arm64" } else { "win-x64" } }
+        elseif ($isMac) { "osx-arm64" }
+        elseif ($arm) { "linux-arm64" }
+        else { "linux-x64" }
+    ),
     [ValidateSet("Debug", "Release")]
     [string] $Configuration = "Release"
 )

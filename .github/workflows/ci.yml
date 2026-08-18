@@ -12,63 +12,97 @@ permissions:
 
 jobs:
   test:
-    runs-on: windows-latest
+    name: ${{ matrix.rid }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            rid: win-x64
+          - os: windows-11-arm
+            rid: win-arm64
+          - os: ubuntu-24.04
+            rid: linux-x64
+          - os: ubuntu-24.04-arm
+            rid: linux-arm64
+          - os: macos-latest
+            rid: osx-arm64
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: "9.0.x"
-      - uses: dlang-community/setup-dlang@v1
-        with:
-          compiler: ldc-latest
+      - name: Native C toolchain (Linux)
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y build-essential
       - name: Publish Avalonia host
         shell: pwsh
-        run: powershell -NoProfile -File tools/build-host.ps1
+        run: ./tools/build-host.ps1 -Runtime ${{ matrix.rid }}
+      - name: Zip host
+        shell: pwsh
+        run: |
+          $rid = "${{ matrix.rid }}"
+          $src = Join-Path "native" $rid
+          Compress-Archive -Path (Join-Path $src "*") -DestinationPath "avalonia-d-host-$rid.zip" -Force
+      - name: Upload host
+        uses: actions/upload-artifact@v4
+        with:
+          name: avalonia-d-host-${{ matrix.rid }}
+          path: avalonia-d-host-${{ matrix.rid }}.zip
+          if-no-files-found: error
+      # LDC has no native windows-arm64 zip yet (ldc-developers/ldc#5030).
+      # setup-dlang on Windows fetches windows-multilib (x64). Skip D steps on
+      # win-arm64 so a missing/wrong-arch LDC cannot fail host publish+upload.
+      # Prefer skip over continue-on-error so a later native LDC is not ignored.
+      - uses: dlang-community/setup-dlang@v2
+        if: matrix.rid != 'win-arm64'
+        with:
+          compiler: ldc-latest
       - name: dub test
+        if: matrix.rid != 'win-arm64'
         run: dub test --compiler=ldc2
       - name: Build examples
+        if: matrix.rid != 'win-arm64'
         run: |
           dub build --compiler=ldc2 --root examples/hello
           dub build --compiler=ldc2 --root examples/gallery
-      - name: Upload host (win-x64)
-        uses: actions/upload-artifact@v4
-        with:
-          name: avalonia-d-host-win-x64
-          path: native/win-x64/**
 
   release:
     name: GitHub Release
     needs: test
     if: github.ref_type == 'tag' && startsWith(github.ref_name, 'v') && !contains(github.ref_name, '+')
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Release label
+        id: meta
+        run: echo "label=${GITHUB_REF_NAME#v}+avalonia.12" >> "$GITHUB_OUTPUT"
       - uses: actions/download-artifact@v4
         with:
-          name: avalonia-d-host-win-x64
-          path: native/win-x64
-      - name: Zip host
-        shell: pwsh
-        run: Compress-Archive -Path native/win-x64/* -DestinationPath avalonia-d-host-win-x64.zip
+          pattern: avalonia-d-host-*
+          path: dist
+          merge-multiple: true
       - name: Publish release
         uses: softprops/action-gh-release@v2
         with:
-          name: 0.1.0+avalonia.12
+          name: ${{ steps.meta.outputs.label }}
           generate_release_notes: true
           make_latest: true
-          files: avalonia-d-host-win-x64.zip
+          files: dist/*.zip
           body: |
-            ## avalonia-d 0.1.0+avalonia.12
+            ## avalonia-d ${{ steps.meta.outputs.label }}
 
             D bindings for Avalonia via a DNNE C ABI host, with ShadUI.
 
             Git tag: `${{ github.ref_name }}` (immutable). Public label encodes Avalonia 12.
 
-            ### Setup
-            ```powershell
-            powershell -File tools/build-host.ps1
-            dub test
-            ```
+            Host zips (unpack into `native/<rid>/`):
 
-            Or unpack `avalonia-d-host-win-x64.zip` into `native/win-x64/`.
+            - `avalonia-d-host-win-x64.zip`
+            - `avalonia-d-host-win-arm64.zip`
+            - `avalonia-d-host-linux-x64.zip`
+            - `avalonia-d-host-linux-arm64.zip`
+            - `avalonia-d-host-osx-arm64.zip`
+
             Requires a .NET 9 runtime (framework-dependent host).

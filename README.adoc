@@ -44,7 +44,7 @@ No prior D wrapper for Avalonia was found (GitHub / awesome-d / DUB, 2026-08). A
 A from-scratch shadcn clone is unnecessary: https://github.com/accntech/shad-ui[ShadUI] (MIT, NuGet `ShadUI`, Avalonia 12.1) already covers that ground. This repo consumes it. Fork and refine ShadUI only when a C# control change is required.
 
 Install: `dub add avalonia-d` (after a SemVer tag is on the registry; pin `~>0.1.0` to stay on 0.1.x).
-Build the host locally with `powershell -File tools/build-host.ps1`, or unpack the `avalonia-d-host-win-x64.zip` asset from GitHub Releases into `native/win-x64/`.
+Build the host locally with `powershell -File tools/build-host.ps1`, or unpack the matching `avalonia-d-host-<rid>.zip` asset from GitHub Releases into `native/<rid>/` (`win-x64`, `win-arm64`, `linux-x64`, `linux-arm64`, `osx-arm64`).
 
 == About The Project
 
@@ -67,7 +67,7 @@ Build the host locally with `powershell -File tools/build-host.ps1`, or unpack t
 powershell -File tools/build-host.ps1
 ----
 
-This publishes `native/win-x64/` (or `linux-x64` / `osx-arm64`) with `AvaloniaD.HostNE.dll` and the managed Avalonia + ShadUI assemblies it loads.
+This publishes `native/<rid>/` for the current machine (or `-Runtime win-arm64` and so on) with the DNNE shim and the managed Avalonia + ShadUI assemblies it loads. GitHub Actions builds `win-x64`, `win-arm64`, `linux-x64`, `linux-arm64`, and `osx-arm64` (no macOS x64).
 
 == Usage
 

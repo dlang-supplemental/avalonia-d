@@ -78,11 +78,26 @@ private string[] candidatePaths()
         enum shim = "libAvaloniaD.HostNE.so";
 
     version (Windows)
-        enum rid = "win-x64";
+    {
+        version (AArch64)
+            enum rid = "win-arm64";
+        else
+            enum rid = "win-x64";
+    }
     else version (OSX)
-        enum rid = "osx-arm64";
+    {
+        version (AArch64)
+            enum rid = "osx-arm64";
+        else
+            enum rid = "osx-x64";
+    }
     else
-        enum rid = "linux-x64";
+    {
+        version (AArch64)
+            enum rid = "linux-arm64";
+        else
+            enum rid = "linux-x64";
+    }
 
     string[] starts;
     try

@@ -1,0 +1,21 @@
+= 2026-08-17 — Multi-arch host CI
+
+== Summary
+
+GitHub Actions now publishes the DNNE Avalonia host for five RIDs: Windows
+and Linux on x64 and ARM64, plus macOS ARM64. macOS x64 is not built.
+
+== Notes
+
+* Runners: `windows-latest`, `windows-11-arm`, `ubuntu-24.04`,
+  `ubuntu-24.04-arm`, `macos-latest`.
+* Each matrix job zips `native/<rid>/` as `avalonia-d-host-<rid>.zip`. A tag
+  push attaches all five zips to the GitHub Release.
+* `win-arm64` still publishes and uploads `avalonia-d-host-win-arm64.zip`.
+  `setup-dlang`, `dub test`, and example builds are skipped on that RID:
+  LDC has no native windows-arm64 package yet (ldc-developers/ldc#5030;
+  setup-dlang on Windows fetches x64 `windows-multilib`). Linux ARM and
+  macOS ARM keep full LDC + `dub test`. Matrix `fail-fast` is false.
+* `tools/build-host.ps1` defaults to `win-arm64` / `linux-arm64` on ARM hosts
+  and no longer offers `osx-x64`.
+* The D loader picks `native/<rid>/` from OS plus `version (AArch64)`.

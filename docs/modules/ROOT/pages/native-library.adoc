@@ -7,11 +7,15 @@ Publish the C# host into `native/<rid>/`:
 ----
 pwsh tools/build-host.ps1
 # Windows PowerShell 5: powershell -File tools/build-host.ps1
-# optional: -Runtime linux-x64
+# optional: -Runtime win-arm64 | linux-x64 | linux-arm64 | osx-arm64
 ----
 
-On Windows the loader looks for `AvaloniaD.HostNE.dll` next to the executable,
-then `native/win-x64/`, then `native/`, then the process search path.
+CI publishes hosts for `win-x64`, `win-arm64`, `linux-x64`, `linux-arm64`, and
+`osx-arm64` (no macOS x64).
+
+The loader looks for the DNNE shim next to the executable, then
+`native/<rid>/` for the compiled OS/arch, then `native/`, then the process
+search path.
 
 The shim must stay next to `AvaloniaD.Host.dll`, `AvaloniaD.Host.runtimeconfig.json`,
 and the Avalonia / ShadUI assemblies from `dotnet publish`. Copy the whole
