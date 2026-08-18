@@ -43,7 +43,8 @@ No prior D wrapper for Avalonia was found (GitHub / awesome-d / DUB, 2026-08). A
 
 A from-scratch shadcn clone is unnecessary: https://github.com/accntech/shad-ui[ShadUI] (MIT, NuGet `ShadUI`, Avalonia 12.1) already covers that ground. This repo consumes it. Fork and refine ShadUI only when a C# control change is required.
 
-Install: `dub add avalonia-d` (after building the host below).
+Install: `dub add avalonia-d` (after a SemVer tag is on the registry; pin `~>0.1.0` to stay on 0.1.x).
+Build the host locally with `powershell -File tools/build-host.ps1`, or unpack the `avalonia-d-host-win-x64.zip` asset from GitHub Releases into `native/win-x64/`.
 
 == About The Project
 

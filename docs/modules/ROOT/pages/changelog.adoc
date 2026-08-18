@@ -1,7 +1,7 @@
 = Changelog
 :navtitle: Changelog
 
-== 2026-08-17 — v0.1.0
+== 2026-08-17 — v0.1.0 (`0.1.0+avalonia.12`)
 
 * Initial D bindings for Avalonia via a DNNE C ABI host
 * ShadUI theme plus Window, Stack, Card, Button, Text, TextBox, CheckBox

@@ -3,23 +3,16 @@ name: ci
 on:
   push:
     branches: [main]
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+"
   pull_request:
 
-jobs:
-  host:
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: "9.0.x"
-      - name: Publish Avalonia host
-        shell: pwsh
-        run: pwsh tools/build-host.ps1
+permissions:
+  contents: write
 
-  dlib:
+jobs:
+  test:
     runs-on: windows-latest
-    needs: host
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4
@@ -30,6 +23,52 @@ jobs:
           compiler: ldc-latest
       - name: Publish Avalonia host
         shell: pwsh
-        run: pwsh tools/build-host.ps1
+        run: powershell -NoProfile -File tools/build-host.ps1
       - name: dub test
         run: dub test --compiler=ldc2
+      - name: Build examples
+        run: |
+          dub build --compiler=ldc2 --root examples/hello
+          dub build --compiler=ldc2 --root examples/gallery
+      - name: Upload host (win-x64)
+        uses: actions/upload-artifact@v4
+        with:
+          name: avalonia-d-host-win-x64
+          path: native/win-x64/**
+
+  release:
+    name: GitHub Release
+    needs: test
+    if: github.ref_type == 'tag' && startsWith(github.ref_name, 'v') && !contains(github.ref_name, '+')
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: avalonia-d-host-win-x64
+          path: native/win-x64
+      - name: Zip host
+        shell: pwsh
+        run: Compress-Archive -Path native/win-x64/* -DestinationPath avalonia-d-host-win-x64.zip
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: 0.1.0+avalonia.12
+          generate_release_notes: true
+          make_latest: true
+          files: avalonia-d-host-win-x64.zip
+          body: |
+            ## avalonia-d 0.1.0+avalonia.12
+
+            D bindings for Avalonia via a DNNE C ABI host, with ShadUI.
+
+            Git tag: `${{ github.ref_name }}` (immutable). Public label encodes Avalonia 12.
+
+            ### Setup
+            ```powershell
+            powershell -File tools/build-host.ps1
+            dub test
+            ```
+
+            Or unpack `avalonia-d-host-win-x64.zip` into `native/win-x64/`.
+            Requires a .NET 9 runtime (framework-dependent host).

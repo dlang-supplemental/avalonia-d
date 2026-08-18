@@ -7,4 +7,5 @@ Project facts for agents. Workstation/env facts live only in `$CODE_ROOT/MEMORIE
 - `ShadUI.Window` has a **protected** constructor; the host subclasses it as `AvdWindow`.
 - Build the host before `dub run`: `powershell -File tools/build-host.ps1`. Output lands in `native/<rid>/` (DNNE `AvaloniaD.HostNE.dll` plus managed deps).
 - FFI aliases in `source/avalonia/ffi.d` **must** be `extern(C)`. D's default function-pointer ABI will NaN extra `double` arguments (Margin). Do not mark DNNE exports as `CallConvCdecl` on Windows x64.
-- No prior D wrapper for Avalonia was found (GitHub / awesome-d / DUB, 2026-08).
+- First public label: **0.1.0+avalonia.12** (git tag `v0.1.0`). Avalonia 12 is the peer axis; do not bump product major solely because Avalonia’s major moved.
+- DUB install is `dub add avalonia-d` / `~>0.1.0`. Do not publish a fake `0.x` version on the registry.

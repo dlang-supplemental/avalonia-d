@@ -24,3 +24,4 @@ Avalonia was found on GitHub, awesome-d, or DUB.
   grows control-by-control.
 * NativeAOT is deferred: ShadUI loads XAML styles via `AvaloniaXamlLoader`,
   which is a poor trim fit. DNNE keeps the full CoreCLR.
+* Public label **0.1.0+avalonia.12** (git tag `v0.1.0`).

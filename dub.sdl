@@ -3,6 +3,7 @@ description "D bindings for Avalonia via a C ABI host, with ShadUI (shadcn-inspi
 authors "amdphreak"
 copyright "Copyright © 2026, amdphreak"
 license "MIT"
+version "0.1.0"
 targetType "library"
 targetName "avalonia_d"
 
