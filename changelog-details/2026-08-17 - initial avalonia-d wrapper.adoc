@@ -1,0 +1,26 @@
+= 2026-08-17 — Initial Avalonia D wrapper
+
+== Summary
+
+First cut of `avalonia-d` under `dlang-supplemental`. No existing D wrapper for
+Avalonia was found on GitHub, awesome-d, or DUB.
+
+== Approach
+
+* C# class library (`AvaloniaD.Host`) starts Avalonia in-process with
+  `AppBuilder` + `ClassicDesktopStyleApplicationLifetime` (code-only, no AXAML
+  on the D side).
+* DNNE exports a small C ABI (`include/avalonia_d.h`). D dynamically loads the
+  native shim, same pattern as `opentui-d` / `vello-d`.
+* High-level shadcn-style widgets come from NuGet `ShadUI` 0.2.4 (MIT,
+  https://github.com/accntech/shad-ui[accntech/shad-ui]), not a from-scratch
+  clone. Fork that tree when a C# control change is required.
+* `ShadUI.Window` is subclassed (`AvdWindow`) because its constructor is
+  protected.
+
+== Notes
+
+* This is not a 1:1 mapping of every Avalonia type. The ABI is handle-based and
+  grows control-by-control.
+* NativeAOT is deferred: ShadUI loads XAML styles via `AvaloniaXamlLoader`,
+  which is a poor trim fit. DNNE keeps the full CoreCLR.

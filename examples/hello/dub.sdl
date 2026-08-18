@@ -1,0 +1,6 @@
+name "hello"
+description "Minimal avalonia-d window"
+authors "amdphreak"
+license "MIT"
+targetType "executable"
+dependency "avalonia-d" path="../.."

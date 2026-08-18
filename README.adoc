@@ -1,0 +1,132 @@
+ifndef::env-github[:icons: font]
+:toc: preamble
+:toclevels: 2
+:sectanchors:
+
+ifdef::env-github[]
+++++
+<a id="readme-top"></a>
+<div align="center">
+<a href="https://github.com/dlang-supplemental/avalonia-d/graphs/contributors"><img src="https://img.shields.io/github/contributors/dlang-supplemental/avalonia-d.svg?style=for-the-badge" alt="Contributors"></a>
+<a href="https://github.com/dlang-supplemental/avalonia-d/network/members"><img src="https://img.shields.io/github/forks/dlang-supplemental/avalonia-d.svg?style=for-the-badge" alt="Forks"></a>
+<a href="https://github.com/dlang-supplemental/avalonia-d/stargazers"><img src="https://img.shields.io/github/stars/dlang-supplemental/avalonia-d.svg?style=for-the-badge" alt="Stars"></a>
+<a href="https://github.com/dlang-supplemental/avalonia-d/issues"><img src="https://img.shields.io/github/issues/dlang-supplemental/avalonia-d.svg?style=for-the-badge" alt="Issues"></a>
+<a href="https://github.com/dlang-supplemental/avalonia-d/blob/main/LICENSE"><img src="https://img.shields.io/github/license/dlang-supplemental/avalonia-d.svg?style=for-the-badge" alt="License"></a>
+<br />
+<h3 align="center">avalonia-d</h3>
+<p align="center">
+D bindings for <a href="https://avaloniaui.net/">Avalonia</a> via a C ABI host, with <a href="https://github.com/accntech/shad-ui">ShadUI</a> (shadcn-inspired) controls.<br />
+<a href="https://dlang-supplemental.github.io/docs/avalonia-d/index.html"><strong>Explore the docs »</strong></a><br /><br /><a href="https://github.com/dlang-supplemental/avalonia-d/issues">Report Bug</a>
+&middot;
+<a href="https://github.com/dlang-supplemental/avalonia-d/issues">Request Feature</a>
+</p>
+</div>
+++++
+endif::[]
+
+ifndef::env-github[]
+image:https://img.shields.io/github/contributors/dlang-supplemental/avalonia-d.svg?style=for-the-badge[Contributors,link=https://github.com/dlang-supplemental/avalonia-d/graphs/contributors]
+image:https://img.shields.io/github/forks/dlang-supplemental/avalonia-d.svg?style=for-the-badge[Forks,link=https://github.com/dlang-supplemental/avalonia-d/network/members]
+image:https://img.shields.io/github/stars/dlang-supplemental/avalonia-d.svg?style=for-the-badge[Stars,link=https://github.com/dlang-supplemental/avalonia-d/stargazers]
+image:https://img.shields.io/github/issues/dlang-supplemental/avalonia-d.svg?style=for-the-badge[Issues,link=https://github.com/dlang-supplemental/avalonia-d/issues]
+image:https://img.shields.io/github/license/dlang-supplemental/avalonia-d.svg?style=for-the-badge[License,link=https://github.com/dlang-supplemental/avalonia-d/blob/main/LICENSE]
+
+= avalonia-d
+
+D bindings for https://avaloniaui.net/[Avalonia] via a C ABI host, with https://github.com/accntech/shad-ui[ShadUI] (shadcn-inspired) controls.
+
+link:https://dlang-supplemental.github.io/docs/avalonia-d/index.html[Explore the docs »] ·
+link:https://github.com/dlang-supplemental/avalonia-d/issues[Report Bug]
+endif::[]
+
+No prior D wrapper for Avalonia was found (GitHub / awesome-d / DUB, 2026-08). Avalonia is a .NET UI toolkit, so this package hosts CoreCLR from a small C# library (DNNE native exports) and wraps opaque handles in D.
+
+A from-scratch shadcn clone is unnecessary: https://github.com/accntech/shad-ui[ShadUI] (MIT, NuGet `ShadUI`, Avalonia 12.1) already covers that ground. This repo consumes it. Fork and refine ShadUI only when a C# control change is required.
+
+Install: `dub add avalonia-d` (after building the host below).
+
+== About The Project
+
+++++
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+++++
+
+== Requirements
+
+* D compiler (`ldc2` or `dmd`) and https://dub.pm/[dub]
+* https://dotnet.microsoft.com/download[.NET 9 SDK]
+* A C compiler on `PATH` for DNNE (MSVC Build Tools on Windows)
+
+== Installation
+
+=== Build the Avalonia host
+
+[source,powershell]
+----
+powershell -File tools/build-host.ps1
+----
+
+This publishes `native/win-x64/` (or `linux-x64` / `osx-arm64`) with `AvaloniaD.HostNE.dll` and the managed Avalonia + ShadUI assemblies it loads.
+
+== Usage
+
+=== Quick start
+
+[source,d]
+----
+import avalonia;
+
+void main()
+{
+    init(ThemeMode.dark);
+
+    auto win = new Window("Hello", 480, 280);
+    auto col = new Stack();
+    col.margin(24, 24, 24, 24);
+
+    auto btn = new Button("Click me");
+    btn.onClick({ /* ... */ });
+    col.add(btn);
+
+    win.content = col;
+    win.run();
+}
+----
+
+Examples:
+
+[source,powershell]
+----
+powershell -File tools/build-host.ps1
+dub run --root examples/hello
+dub run --root examples/gallery
+----
+
+See also xref-style docs under `docs/` in this repository.
+
+++++
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+++++
+
+== Built With
+
+* Runtime: D, .NET 9 / CoreCLR
+* UI: Avalonia 12.1, ShadUI 0.2.4
+* Interop: DNNE native exports, C ABI in `include/avalonia_d.h`
+* Docs: AsciiDoc / Antora (org hub)
+
+== Changelog
+
+See link:CHANGELOG.adoc[CHANGELOG.adoc].
+
+== License
+
+MIT. ShadUI is MIT (Accountech). Avalonia is MIT.
+
+== Contact
+
+DLang Supplemental — dlang@devcentr.org
+
+Project Link: https://github.com/dlang-supplemental/avalonia-d
+
+Site: https://dlang-supplemental.github.io

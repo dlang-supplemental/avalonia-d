@@ -1,0 +1,20 @@
+= ShadUI
+:navtitle: ShadUI
+
+Avalonia's built-in controls are low-level. This package does **not** clone
+https://ui.shadcn.com/[shadcn/ui] from scratch.
+
+https://github.com/accntech/shad-ui[ShadUI] already does that work (MIT, NuGet
+`ShadUI`, Avalonia 12.1 as of 0.2.4). russkyc's
+https://github.com/russkyc/russkyc-ui-avalonia[Russkyc.UI.Avalonia] is a second
+class-based theme in the same design language.
+
+avalonia-d consumes ShadUI:
+
+* `ShadTheme` on the `Application`
+* `ShadUI.Window` (subclassed; the upstream constructor is protected)
+* `Card`, `CardTitle`, `CardDescription`
+* Styled `Button` / `TextBox` / `CheckBox` (add classes such as `Primary`, `Ghost`, `Outline`, `Destructive`)
+
+Fork `accntech/shad-ui` under dlang-supplemental only when a C# control change
+cannot ship as a NuGet bump or a D-side composition.

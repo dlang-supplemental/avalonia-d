@@ -1,0 +1,35 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  host:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "9.0.x"
+      - name: Publish Avalonia host
+        shell: pwsh
+        run: pwsh tools/build-host.ps1
+
+  dlib:
+    runs-on: windows-latest
+    needs: host
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "9.0.x"
+      - uses: dlang-community/setup-dlang@v1
+        with:
+          compiler: ldc-latest
+      - name: Publish Avalonia host
+        shell: pwsh
+        run: pwsh tools/build-host.ps1
+      - name: dub test
+        run: dub test --compiler=ldc2

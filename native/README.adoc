@@ -1,0 +1,6 @@
+= Native host output
+
+This directory is filled by `pwsh tools/build-host.ps1`.
+
+It contains the DNNE native shim (`AvaloniaD.HostNE.dll` on Windows) plus the
+managed Avalonia / ShadUI assemblies it loads. Do not commit those binaries.

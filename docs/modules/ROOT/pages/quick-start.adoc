@@ -1,0 +1,34 @@
+= Quick start
+:navtitle: Quick start
+
+Build the host, then run an example:
+
+[source,powershell]
+----
+pwsh tools/build-host.ps1
+# Windows PowerShell 5: powershell -File tools/build-host.ps1
+dub run --root examples/gallery
+----
+
+[source,d]
+----
+import avalonia;
+
+void main()
+{
+    init(ThemeMode.dark);
+
+    auto win = new Window("Hello", 480, 280);
+    auto col = new Stack();
+    col.margin(24, 24, 24, 24);
+
+    auto btn = new Button("Click me");
+    btn.onClick({ /* ... */ });
+    col.add(btn);
+
+    win.content = col;
+    win.run();
+}
+----
+
+`dub test` loads the shim and checks `avd_version` when `native/<rid>/` is present; otherwise the unittest returns early.

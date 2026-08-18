@@ -1,0 +1,29 @@
+= Architecture
+:navtitle: Architecture
+:stem: latexmath
+
+Avalonia has no C API. D cannot call C# types directly, so avalonia-d splits
+the stack:
+
+[cols="1,3"]
+|===
+| Layer | Role
+
+| D (`import avalonia`)
+| `Window`, `Stack`, `Card`, `Button`, … over opaque `ulong` handles.
+
+| C ABI (`include/avalonia_d.h`)
+| `extern(C)` (Microsoft x64 on Windows). UTF-8 strings. Callbacks are `void(void* user)`.
+
+| DNNE shim (`AvaloniaD.HostNE`)
+| Native exports that bootstrap CoreCLR and forward into managed methods.
+
+| `AvaloniaD.Host`
+| Handle table, `AppBuilder` startup, ShadUI `ShadTheme`, control factories.
+|===
+
+`avd_init` must run before creating widgets (`SetupWithLifetime`). `avd_run`
+blocks on the desktop lifetime until the window closes.
+
+The ABI is intentionally small. It is not a generated 1:1 projection of every
+Avalonia type.

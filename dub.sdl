@@ -1,0 +1,14 @@
+name "avalonia-d"
+description "D bindings for Avalonia via a C ABI host, with ShadUI (shadcn-inspired) controls"
+authors "amdphreak"
+copyright "Copyright © 2026, amdphreak"
+license "MIT"
+targetType "library"
+targetName "avalonia_d"
+
+importPaths "source"
+sourcePaths "source"
+
+// Dynamic loading — no link flags. Build the host first:
+//   pwsh tools/build-host.ps1
+// then pass the native shim path to avalonia.load() or keep it on PATH.

@@ -1,0 +1,28 @@
+= avalonia-d
+:navtitle: Introduction
+:stem: latexmath
+
+D bindings for https://avaloniaui.net/[Avalonia] via a C ABI host, with
+https://github.com/accntech/shad-ui[ShadUI] (shadcn-inspired) controls.
+
+No prior D wrapper existed (as of 2026-08). Avalonia is a .NET UI toolkit, so
+the D process loads a DNNE native shim that hosts CoreCLR, Avalonia, and
+ShadUI, then wraps opaque handles.
+
+== Links
+
+* https://github.com/dlang-supplemental/avalonia-d[Repository]
+* https://github.com/AvaloniaUI/Avalonia[Upstream Avalonia]
+* https://github.com/accntech/shad-ui[ShadUI]
+
+== Requirements
+
+* D compiler (`ldc2` or `dmd`) and https://dub.pm/[dub]
+* .NET 9 SDK
+* C compiler for DNNE (MSVC Build Tools on Windows)
+
+== Status
+
+* Dynamic loader for the DNNE shim
+* Idiomatic wrappers for window, stack, scroll, card, button, text, text box, checkbox
+* ShadUI `ShadTheme` (light / dark / system)

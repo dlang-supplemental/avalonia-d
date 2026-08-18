@@ -1,0 +1,6 @@
+name "gallery"
+description "ShadUI card gallery for avalonia-d"
+authors "amdphreak"
+license "MIT"
+targetType "executable"
+dependency "avalonia-d" path="../.."

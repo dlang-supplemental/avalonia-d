@@ -1,0 +1,8 @@
+= Changelog
+
+== 2026-08-17 — v0.1.0
+
+* Initial D bindings for Avalonia via a DNNE C ABI host
+* ShadUI theme plus Window, Stack, Card, Button, Text, TextBox, CheckBox
+* `tools/build-host.ps1` to publish the .NET host into `native/<rid>/`
+* link:changelog-details/2026-08-17%20-%20initial%20avalonia-d%20wrapper.adoc[Details]
